@@ -1,0 +1,9 @@
+﻿@model Post
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<h1 class="mt-5">@Model.Title</h1>
+
+@Html.Raw(Model.Content)
+

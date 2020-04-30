@@ -21,6 +21,7 @@ namespace SpringBlog
             
             bundles.Add(new StyleBundle("~/Content/bootstrap", "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css").Include(
                       "~/Content/bootstrap.css"));
+
             bundles.UseCdn = true;
 
             #if DEBUG
