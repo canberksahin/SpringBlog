@@ -1,11 +1,15 @@
-﻿@model NewPostViewModel
+﻿@model Post  
 @{
     ViewBag.Title = "New Post";
 }
-@using (Html.BeginForm("New", "Post", FormMethod.Post))
+@using (Html.BeginForm("Edit", "Post", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-
+    @Html.HiddenFor(x=>x.AuthorId)
+    @Html.HiddenFor(x=>x.Slug)
+    @Html.HiddenFor(x=>x.CreationTime)
+    @Html.HiddenFor(x=>x.ModificationTime)
+    @Html.HiddenFor(x=>x.Id)
     <div class="card card-primary card-outline">
         <div class="card-header">
             <h3 class="card-title">Create a New Post</h3>
@@ -15,8 +19,8 @@
             <div class="row">
                 <div class="col-md-9">
                     <div class="form-group">
-                        @Html.TextBoxFor(x=>x.Title, new { @class="form-control", placeholder="Title:"})
-                        @Html.ValidationMessageFor(x=>x.Title,null,new { @class="text-danger"})
+                        @Html.TextBoxFor(x => x.Title, new { @class = "form-control", placeholder = "Title:" })
+                        @Html.ValidationMessageFor(x => x.Title, null, new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -32,31 +36,19 @@
                 @Html.ValidationMessageFor(x => x.Content, null, new { @class = "text-danger" })
 
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <div class="btn btn-default btn-file">
-                            <i class="fas fa-paperclip"></i> Attachment
-                            <input type="file" name="attachment">
-                        </div>
-                        <p class="help-block">Max. 32MB</p>
-                    </div>
+            <div class="form-group">
+                <div class="btn btn-default btn-file">
+                    <i class="fas fa-paperclip"></i> Attachment
+                    <input type="file" name="attachment">
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(x=>x.Title)
-                        @Html.TextBoxFor(x => x.Title, new { @class = "form-control", placeholder = "Short URL" })
-                        @Html.ValidationMessageFor(x => x.Title, null, new { @class = "text-danger" })
-                    </div>
-                </div>
+                <p class="help-block">Max. 32MB</p>
             </div>
-            
         </div>
         <!-- /.card-body -->
         <div class="card-footer">
             <div class="float-right">
                 <button type="button" class="btn btn-default"><i class="fas fa-pencil-alt"></i> Draft</button>
-                <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Send</button>
+                <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Edit</button>
             </div>
             <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Discard</button>
         </div>

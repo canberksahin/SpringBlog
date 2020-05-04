@@ -10,7 +10,7 @@ namespace SpringBlog.Models
     {
         public int Id { get; set; }
 
-        [Required,MaxLength(30)]
+        [Required,MaxLength(30,ErrorMessage ="Category Name can have 30 character at most"),Display(Name ="Category Name")]
         public string CategoryName { get; set; }
 
         public virtual ICollection<Post> Posts { get; set; }
