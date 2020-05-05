@@ -35,10 +35,10 @@ namespace SpringBlog.Areas.Admin.Controllers
                     Title = vm.Title,
                     Content = vm.Content,
                     AuthorId = User.Identity.GetUserId(),
-                    Slug = UrlService.URLFriendly(vm.Title),
+                    Slug = UrlService.URLFriendly(vm.Slug),
                     CreationTime = DateTime.Now,
                     ModificationTime = DateTime.Now,
-                    PhotoPath = ""
+                    PhotoPath = this.SaveImage(vm.FeaturedImage)
                 };
                 db.Posts.Add(post);
                 db.SaveChanges();
@@ -97,6 +97,12 @@ namespace SpringBlog.Areas.Admin.Controllers
             db.SaveChanges();
             TempData["SuccessMessage"] = "The post has been deleted successfully.";
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public string ConvertToSlug(string title)
+        {
+            return UrlService.URLFriendly(title);
         }
     }
 }

@@ -4,20 +4,26 @@
 }
 
 
-    <h1 class="my-4">
-        My Blog Posts
-        <small>by Canberk Şahin</small>
-    </h1>
+<h1 class="my-4">
+    My Blog Posts
+    <small>by Canberk Şahin</small>
+</h1>
 
-    <!-- Blog Post -->
+<!-- Blog Post -->
 @foreach (var post in Model.Posts)
 {
     <div class="card mb-4 blog-post">
-        <img class="card-img-top" src="https://placehold.it/750x100" alt="Card image cap">
+        @if (!string.IsNullOrEmpty(post.PhotoPath))
+        {
+            <img class="card-img-top" src="@Url.FeaturedImage(post.PhotoPath)" alt="Card image cap">
+        }
         <div class="card-body">
             <h2 class="card-title">@post.Title</h2>
-            @Html.Raw(post.Content)
-            <a href="@Url.Action("Show","Article",new { slug=post.Slug})" class="btn btn-primary">Read More &rarr;</a>
+            <div class="blog-post-content">
+                @Html.Raw(post.Content)
+            </div>
+
+            <a href="@Url.Action("Show","Article",new { id=post.Id,slug=post.Slug})" class="btn btn-primary mt-2">Read More &rarr;</a>
         </div>
         <div class="card-footer text-muted">
             Posted on @post.CreationTime.Value.ToShortDateString() by
@@ -30,12 +36,22 @@
 
 
 
-    <!-- Pagination -->
-    <ul class="pagination justify-content-center mb-4">
-        <li class="page-item">
-            <a class="page-link" href="#">&larr; Older</a>
-        </li>
-        <li class="page-item disabled">
-            <a class="page-link" href="#">Newer &rarr;</a>
-        </li>
-    </ul>
+<!-- Pagination -->
+<ul class="pagination justify-content-center mb-4">
+    <li class="page-item">
+        <a class="page-link" href="#">&larr; Older</a>
+    </li>
+    <li class="page-item disabled">
+        <a class="page-link" href="#">Newer &rarr;</a>
+    </li>
+</ul>
+
+@section scripts {
+    <script>
+        $(".blog-post-content").each(function () {
+            if ($(this).outerHeight() >= 500) {
+                $(this).addClass("long-text");
+            }
+        });
+    </script>
+}
