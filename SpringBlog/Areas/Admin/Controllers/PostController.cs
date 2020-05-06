@@ -42,7 +42,7 @@ namespace SpringBlog.Areas.Admin.Controllers
                 };
                 db.Posts.Add(post);
                 db.SaveChanges();
-                //to-do past indexe yönlendir.
+
                 return RedirectToAction("Index");
             }
             ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName).ToList(), "Id", "CategoryName");
@@ -73,6 +73,7 @@ namespace SpringBlog.Areas.Admin.Controllers
                 postDb.CategoryId = post.CategoryId;
                 postDb.Content = post.Content;
                 postDb.Title = post.Title;
+                postDb.Slug = post.Slug;
                 postDb.ModificationTime = DateTime.Now;
                 db.SaveChanges();
                 TempData["SuccessMessage"] = "Post has been updated successfully";

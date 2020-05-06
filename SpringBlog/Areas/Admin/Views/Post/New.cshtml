@@ -39,7 +39,6 @@
                         <div class="custom-file">
                             <input type="file" name="FeaturedImage" class="custom-file-input" id="exampleInputFile">
                             <label class="custom-file-label justify-content-start" for="exampleInputFile">Choose file</label>
-
                         </div>
                     </div>
                     @Html.ValidationMessage("FeaturedImage", null, new { @class = "text-danger ml-1" })
@@ -86,6 +85,7 @@
 
                 $.post("@Url.Action("ConvertToSlug")", { title: title }, function (data) {
                     $("#Slug").val(data);
+                    $("#Slug").focusout();
                 });
             }
         });
