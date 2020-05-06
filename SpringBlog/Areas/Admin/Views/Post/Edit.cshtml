@@ -1,24 +1,26 @@
-﻿@model Post
+﻿@model EditPostViewModel
 @{
-    ViewBag.Title = "New Post";
+    ViewBag.Title = "Edit Post";
 }
-@using (Html.BeginForm("Edit", "Post", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+
+@using (Html.BeginForm("Edit", "Post", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    @Html.HiddenFor(x => x.AuthorId)
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.CurrentFeaturedImage)
     @Html.HiddenFor(x => x.CreationTime)
     @Html.HiddenFor(x => x.ModificationTime)
-    @Html.HiddenFor(x => x.Id)
-    <div class="card card-primary card-outline">
+
+    <div class="card card-primary">
         <div class="card-header">
-            <h3 class="card-title">Create a New Post</h3>
+            <h3 class="card-title">Edit the Post</h3>
         </div>
         <!-- /.card-header -->
         <div class="card-body">
             <div class="row">
                 <div class="col-md-9">
                     <div class="form-group">
-                        @Html.TextBoxFor(x => x.Title, new { @class = "form-control", placeholder = "Title:" })
+                        @Html.TextBoxFor(x => x.Title, new { @class = "form-control", placeholder = "Title" })
                         @Html.ValidationMessageFor(x => x.Title, null, new { @class = "text-danger" })
                     </div>
                 </div>
@@ -30,18 +32,25 @@
                 </div>
             </div>
             <div class="form-group">
-
                 @Html.TextAreaFor(x => x.Content, new { @class = "form-control", data_snote = "true" })
                 @Html.ValidationMessageFor(x => x.Content, null, new { @class = "text-danger" })
+                <div class="small text-right">
+                    @Html.LabelFor(x => x.CreationTime)
+                    @Html.DisplayTextFor(x => x.CreationTime)
 
+                    @Html.LabelFor(x => x.ModificationTime, null, new { @class = "ml-1" })
+                    @Html.DisplayTextFor(x => x.ModificationTime)
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-6 form-inline my-1">
                     <label for="exampleInputFile">Featured Image</label>
                     <div class="input-group flex-fill ml-2">
                         <div class="custom-file">
-                            <input type="file" name="PhotoPath" class="custom-file-input" id="PhotoPath">
-                            <label class="custom-file-label justify-content-start" id="PhotoPath" name="PhotoPath" for="PhotoPath">Choose file</label>
+                            <input type="file" name="FeaturedImage" class="custom-file-input" id="exampleInputFile">
+                            <label id="currentFeaturedImageLabel" class="custom-file-label justify-content-start" for="exampleInputFile">
+                            @(string.IsNullOrEmpty(Model.CurrentFeaturedImage) ? "Choose File" : Model.CurrentFeaturedImage)
+                            </label>
                         </div>
                     </div>
                     @Html.ValidationMessage("FeaturedImage", null, new { @class = "text-danger ml-1" })
@@ -53,15 +62,12 @@
                     @Html.ValidationMessageFor(x => x.Slug, null, new { @class = "text-danger" })
                 </div>
             </div>
-
-            <img src="@Url.FeaturedImage(Model.PhotoPath)" class="ml-4" width="100" />
-
         </div>
         <!-- /.card-body -->
         <div class="card-footer">
-            <div class="float-right">
-                <a href="@Url.Action("Index")" class="btn btn-danger"><i class="fas fa-pencil-alt"></i> Cancel</a>
-                <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Edit</button>
+            <div class="float-left">
+                <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Edit</button>
             </div>
         </div>
         <!-- /.card-footer -->
@@ -73,6 +79,8 @@
 @section scripts {
     <script>
         $(function () {
+
+
             $("#Title").change(function () {
                 if (!$("#Slug").val()) {
                     generateSlug();
@@ -90,10 +98,9 @@
 
                 $.post("@Url.Action("ConvertToSlug")", { title: title }, function (data) {
                     $("#Slug").val(data);
+                    $("#Slug").trigger("blur"); // in order to trigger validation
                 });
             }
         });
     </script>
 }
-
-

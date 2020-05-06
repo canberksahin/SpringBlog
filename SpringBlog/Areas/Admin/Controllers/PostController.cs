@@ -42,6 +42,7 @@ namespace SpringBlog.Areas.Admin.Controllers
                 };
                 db.Posts.Add(post);
                 db.SaveChanges();
+                TempData["SuccessMessage"] = "Post has been created successfully";
 
                 return RedirectToAction("Index");
             }
@@ -60,28 +61,46 @@ namespace SpringBlog.Areas.Admin.Controllers
             {
                 return HttpNotFound();
             }
+
+            var vm = new EditPostViewModel
+            {
+                Id = post.Id,
+                CategoryId = post.CategoryId,
+                Content = post.Content,
+                CreationTime = post.CreationTime.Value,
+                CurrentFeaturedImage = post.PhotoPath,
+                ModificationTime = post.ModificationTime.Value,
+                Slug = post.Slug,
+                Title = post.Title,
+
+            };
             ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName).ToList(), "Id", "CategoryName");
-            return View(post);
+            return View(vm);
         }
 
         [ValidateAntiForgeryToken, HttpPost, ValidateInput(false)]
-        public ActionResult Edit(Post post)
+        public ActionResult Edit(EditPostViewModel vm)
         {
             if (ModelState.IsValid)
             {
-                var postDb = db.Posts.FirstOrDefault(x => x.Id == post.Id);
-                postDb.CategoryId = post.CategoryId;
-                postDb.Content = post.Content;
-                postDb.Title = post.Title;
-                postDb.Slug = post.Slug;
+                var postDb = db.Posts.FirstOrDefault(x => x.Id == vm.Id);
+                postDb.CategoryId = vm.CategoryId;
+                postDb.Content = vm.Content;
+                postDb.Title = vm.Title;
+                postDb.Slug = UrlService.URLFriendly(vm.Slug);
                 postDb.ModificationTime = DateTime.Now;
+                if (vm.FeaturedImage != null)
+                {
+                    this.DeleteImage(postDb.PhotoPath);
+                    postDb.PhotoPath = this.SaveImage(vm.FeaturedImage);
+                }
                 db.SaveChanges();
                 TempData["SuccessMessage"] = "Post has been updated successfully";
                 return RedirectToAction("Index");
             }
-            ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName).ToList(), "Id", "CategoryName");
 
-            return View(db.Posts.Find(post.Id));
+            ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName).ToList(), "Id", "CategoryName");
+            return View(db.Posts.Find(vm.Id));
         }
 
         [ValidateAntiForgeryToken, HttpPost]
@@ -93,7 +112,7 @@ namespace SpringBlog.Areas.Admin.Controllers
             {
                 return HttpNotFound();
             }
-
+            this.DeleteImage(post.PhotoPath);
             db.Posts.Remove(post);
             db.SaveChanges();
             TempData["SuccessMessage"] = "The post has been deleted successfully.";
