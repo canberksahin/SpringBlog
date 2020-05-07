@@ -25,6 +25,9 @@ namespace SpringBlog.Models
 
         public virtual ICollection<Post> Posts { get; set; }
 
+        [MaxLength(100)]
+        public string ProfilePhoto { get; set; }
+
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

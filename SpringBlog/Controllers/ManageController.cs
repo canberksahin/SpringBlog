@@ -6,13 +6,26 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using SpringBlog.Helpers;
 using SpringBlog.Models;
 
 namespace SpringBlog.Controllers
 {
+
+
+
     [Authorize]
-    public class ManageController : Controller
+    public class ManageController : BaseController
     {
+        [HttpPost]
+        public string UploadProfile (string base64)
+        {
+            string fileName = this.SaveProfilePhoto(base64);
+            db.Users.Find(User.Identity.GetUserId()).ProfilePhoto = fileName;
+            db.SaveChanges();
+            return Url.ProfilePhoto(fileName);
+        }
+
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
