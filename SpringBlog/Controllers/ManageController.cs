@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -18,12 +19,20 @@ namespace SpringBlog.Controllers
     public class ManageController : BaseController
     {
         [HttpPost]
-        public string UploadProfile (string base64)
+        public ActionResult UploadProfile(string photoBase64)
         {
-            string fileName = this.SaveProfilePhoto(base64);
-            db.Users.Find(User.Identity.GetUserId()).ProfilePhoto = fileName;
+            if (string.IsNullOrEmpty(photoBase64))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            string fileName = this.SaveProfilePhoto(photoBase64);
+            var user = db.Users.Find(User.Identity.GetUserId());
+            this.DeleteImage(user.ProfilePhoto, "Profiles");
+            user.ProfilePhoto = fileName;
             db.SaveChanges();
-            return Url.ProfilePhoto(fileName);
+
+            return Json(new { photoUrl = Url.ProfilePhoto(fileName) });
         }
 
         private ApplicationSignInManager _signInManager;

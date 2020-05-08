@@ -116,7 +116,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button id="btnUpload" type="button" class="btn btn-primary">Crop and Upload</button>
+                <button id="btnUpload" type="button" class="btn btn-primary"  disabled>Crop and Upload</button>
             </div>
         </div>
     </div>
@@ -128,6 +128,16 @@
 
         $("#file-input").change(function () {
             readFile(this);
+            if (this.files && this.files[0]) {
+                $("#btnUpload").removeAttr("disabled");
+            }
+            else {
+                $("#btnUpload").attr("disabled", "disabled");
+                if (cropper) {
+                    cropper.croppie('destroy');
+                    cropper = null;
+                }
+            }
         });
 
         function readFile(input) {
@@ -149,7 +159,7 @@
         $('#modalChangePhoto').on('hidden.bs.modal', function (e) {
             $("#file-input").val(null);
             $(".custom-file-label").text("Choose file");
-
+            $("#btnUpload").attr("disabled","disabled")
             if (cropper) {
                 cropper.croppie('destroy');
                 cropper = null;
@@ -163,8 +173,8 @@
             }).then(function (base64) {
                // $("#profilePhoto").attr('src', base64);
 
-                $.post("/Manage/UploadProfile", { base64: base64 }, function (data) {
-                    $("#profilePhoto").attr('src', base64);
+                $.post("/Manage/UploadProfile", { photoBase64: base64 }, function (data) {
+                    $("#profilePhoto").attr('src', data.photoUrl);
                     $("#modalChangePhoto").modal('hide');
                 });
             });
