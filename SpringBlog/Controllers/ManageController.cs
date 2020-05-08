@@ -35,6 +35,17 @@ namespace SpringBlog.Controllers
             return Json(new { photoUrl = Url.ProfilePhoto(fileName) });
         }
 
+        [HttpPost]
+        public ActionResult DeleteProfile()
+        {
+            var user = db.Users.Find(User.Identity.GetUserId());
+            this.DeleteImage(user.ProfilePhoto, "Profiles");
+            user.ProfilePhoto = null;
+            db.SaveChanges();
+
+            return Json(new { photoUrl = Url.ProfilePhoto(null) });
+        }
+
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 

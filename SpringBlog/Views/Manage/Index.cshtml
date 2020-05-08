@@ -10,11 +10,18 @@
     <h4>Change your account settings</h4>
     <hr />
 
-    <div class="manage-profile-photo-container float-right text-center">
-        <a href="#" data-toggle="modal" data-target="#modalChangePhoto">
-            <img id="profilePhoto" src="@Url.LoggedInProfilePhoto()" alt="Profile Photo" width="100" /> <br />
-            Update Photo
-        </a>
+    <div class="manage-profile-photo-container float-right text-center position-relative">
+
+        <div class="dropdown mt-1 position-absolute" style="bottom:3px; right:3px;">
+            <button class="btn btn-primary btn-sm " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-edit"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right small" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item text-center small" href="#" data-toggle="modal" data-target="#modalChangePhoto">Change</a>
+                <a id="btnDeletePhoto" class="dropdown-item text-center small" href="#">Remove</a>
+            </div>
+        </div>
+        <img id="profilePhoto" class="rounded" src="@Url.LoggedInProfilePhoto()" alt="profile photo" width="150" /> <br />
     </div>
 
     <dl class="dl-horizontal">
@@ -116,7 +123,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button id="btnUpload" type="button" class="btn btn-primary"  disabled>Crop and Upload</button>
+                <button id="btnUpload" type="button" class="btn btn-primary" disabled>Crop and Upload</button>
             </div>
         </div>
     </div>
@@ -159,7 +166,7 @@
         $('#modalChangePhoto').on('hidden.bs.modal', function (e) {
             $("#file-input").val(null);
             $(".custom-file-label").text("Choose file");
-            $("#btnUpload").attr("disabled","disabled")
+            $("#btnUpload").attr("disabled", "disabled")
             if (cropper) {
                 cropper.croppie('destroy');
                 cropper = null;
@@ -171,12 +178,18 @@
                 type: "base64",
                 size: { width: 400, height: 400 }
             }).then(function (base64) {
-               // $("#profilePhoto").attr('src', base64);
+                // $("#profilePhoto").attr('src', base64);
 
                 $.post("/Manage/UploadProfile", { photoBase64: base64 }, function (data) {
                     $("#profilePhoto").attr('src', data.photoUrl);
                     $("#modalChangePhoto").modal('hide');
                 });
+            });
+        });
+
+        $("#btnDeletePhoto").click(function() {
+            $.post("@Url.Action("DeleteProfile")", function (data) {
+                $("#profilePhoto").attr('src', data.photoUrl);
             });
         });
 
