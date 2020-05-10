@@ -13,8 +13,6 @@ using SpringBlog.Models;
 namespace SpringBlog.Controllers
 {
 
-
-
     [Authorize]
     public class ManageController : BaseController
     {
