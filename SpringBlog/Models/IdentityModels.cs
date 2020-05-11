@@ -25,6 +25,8 @@ namespace SpringBlog.Models
 
         public virtual ICollection<Post> Posts { get; set; }
 
+        public virtual List<Comment> Comments { get; set; }
+
         [MaxLength(100)]
         public string ProfilePhoto { get; set; }
 
@@ -45,12 +47,19 @@ namespace SpringBlog.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Post>().HasRequired(x => x.Category).WithMany(x => x.Posts).HasForeignKey(x => x.CategoryId).WillCascadeOnDelete(false);
+
+
+            modelBuilder.Entity<Comment>().HasRequired(x => x.Author).WithMany(x => x.Comments).HasForeignKey(x => x.AuthorId).WillCascadeOnDelete(false);
+
             base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Category> Categories { get; set; }
 
         public DbSet<Post> Posts { get; set; }
+
+        public DbSet<Comment> Comments { get; set; }
+
 
     }
 }

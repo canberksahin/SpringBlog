@@ -1,14 +1,108 @@
-﻿@model Post
+﻿@*https://startbootstrap.com/templates/blog-post/*@
+@model ShowPostViewModel
 @{
-    ViewBag.Title = Model.Title;
+    ViewBag.Title = Model.Post.Title;
 }
+<div>
+    <!-- Title -->
+    <h1 class="mt-1">@Model.Post.Title</h1>
 
-<h1 class="mt-1 ml-4">@Model.Title</h1>
-<div class="show-post">
-    @if (!string.IsNullOrEmpty(Model.PhotoPath))
+    <!-- Author -->
+    <p class="lead">
+        by
+        <a href="#">@Model.Post.Author.DisplayName</a>
+    </p>
+
+    <hr />
+
+    <!-- Date/Time -->
+    <p>Posted on @Model.Post.CreationTime</p>
+
+    <hr />
+
+    <!-- Preview Image -->
+    @if (!string.IsNullOrEmpty(Model.Post.PhotoPath))
     {
-    <img src="@Url.FeaturedImage(Model.PhotoPath)" alt="Alternate Text" />
+        <img src="@Url.FeaturedImage(Model.Post.PhotoPath)" alt="Post Featured Image" class="img-fluid rounded" />
+        <hr />
     }
-    @Html.Raw(Model.Content)
+
+
+    <!-- Post Content -->
+    @Html.Raw(Model.Post.Content)
+
+    <hr />
+
+    <!-- Comments Form -->
+    <div class="card my-4" id="leave-a-comment">
+        <h5 class="card-header" >Leave a Comment:</h5>
+        <div class="card-body">
+            @if (Request.QueryString["commentSuccess"] == "True")
+            {
+                <div class="alert alert-success">
+                    Your Comment has been added successfully
+                </div>
+            }
+            @if (Request.IsAuthenticated)
+            {
+                @Html.Partial("_CommentFormPartial", Model.CommentViewModel)
+            }
+            else
+            {
+                <p class="text-center mt-3">Please, @Html.ActionLink("Log In", "Login", "Account", new { returnUrl = Request.Url.AbsolutePath }, null) or @Html.ActionLink("Register", "Register", "Account") to leave a comment.</p>
+            }
+        </div>
+    </div>
+
+
+    <!-- Comment with nested comments -->
+    @foreach (var item in Model.Post.Comments.
+        Where(x => x.State == SpringBlog.Enums.CommentState.Approved && x.ParentId==null).
+        OrderByDescending(x => x.CreationTime))
+    {
+        <div class="media mt-4">
+            <img class="d-flex mr-3 rounded-circle" src="@Url.ProfilePhoto(item.Author.ProfilePhoto)" alt="" width="50" height="50">
+            <div class="media-body">
+                <h5 class="mt-0">@item.Author.DisplayName</h5>
+                @item.Content <br />
+                <a href="" class="replay-button" data-comment-id="@item.Id">Reply</a>
+                <div class="reply-form-wrapper"></div>
+
+                @foreach (var subcomment in item.Children.
+                    Where(x => x.State == SpringBlog.Enums.CommentState.Approved).
+                    OrderBy(x => x.CreationTime))
+                {
+                    <div class="media mt-4">
+                        <img class="d-flex mr-3 rounded-circle" src="@Url.ProfilePhoto(subcomment.Author.ProfilePhoto)" alt="" width="50" height="50">
+                        <div class="media-body">
+                            <h5 class="mt-0">@subcomment.Author.DisplayName</h5>
+                            @subcomment.Content
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+
 </div>
 
+@section scripts {
+    <script>
+        setTimeout(function () {
+            if (location.hash == "#leave-a-comment") {
+                window.scrollTo(0, $("#leave-a-comment").offset().top - 65);
+            }
+        }, 100);
+
+        $(".replay-button").click(function (event) {
+
+            var commentId = $(this).data("comment-id");
+            event.preventDefault();
+            var frm = $("#leave-a-comment form").clone();
+            frm.find("#ParentId").val(commentId);
+            $(".reply-form-wrapper").html("");
+            $(this).next(".reply-form-wrapper").html(frm);
+        });
+    </script>
+}
