@@ -27,6 +27,7 @@ namespace SpringBlog.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                cat.Slug = SpringBlog.Helpers.UrlService.URLFriendly(cat.Slug);
                 db.Categories.Add(cat);
                 db.SaveChanges();
                 TempData["SuccessMessage"] = "Category has been created successfully";
@@ -56,6 +57,7 @@ namespace SpringBlog.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                cat.Slug = SpringBlog.Helpers.UrlService.URLFriendly(cat.Slug);
                 db.Entry(cat).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 TempData["SuccessMessage"] = "Category has been updated successfully";
