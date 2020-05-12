@@ -16,7 +16,7 @@
                     <th>Content</th>
                     <th>Author</th>
                     <th>Post Title</th>
-                    <th>Creation Time</th>
+                    <th>Time</th>
                     <th>Is Published</th>
                     <th>Actions</th>
                 </tr>
@@ -26,7 +26,14 @@
                 {
                     <tr>
                         <td>@item.Id</td>
-                        <td>@item.Content</td>
+                        <td style="max-width:300px;">
+                            @item.Content
+                            @if (item.Parent != null)
+                            {
+                                <br />
+                                <span class="small text-info">(Reply to the comment # @item.Parent.Id)</span>
+                            }
+                        </td>
                         <td>@item.Author.DisplayName</td>
                         <td>@item.Post.Title</td>
                         <td>@item.CreationTime.Value</td>
@@ -34,9 +41,9 @@
                             @Html.CheckBox("IsPublished",item.State==SpringBlog.Enums.CommentState.Approved,new { data_bootstrap_switch="", data_off_color="danger", data_on_color="success", data_off_text="No", data_on_text="Yes" , data_comment_id =item.Id})
                         </td>
                         <td>
-                            <a href="@Url.Action("Edit", new { id=item.Id})" class="btn btn-info">
+                            @*<a href="@Url.Action("Edit", new { id=item.Id})" class="btn btn-info">
                                 <i class="fas fa-edit"></i>
-                            </a>
+                            </a>*@
                             <a href="#" class="btn btn-danger" data-delete-id="@item.Id" data-delete-name="Comment #@item.Id" data-delete-action="@Url.Action("Delete")">
                                 <i class="fas fa-trash"></i>
                             </a>

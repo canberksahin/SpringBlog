@@ -54,43 +54,44 @@
         </div>
     </div>
 
+    <!-- Comments -->
+    <div id="comments">
+        @foreach (var item in Model.Post.Comments.
+       Where(x => x.State == SpringBlog.Enums.CommentState.Approved && x.ParentId == null).
+       OrderByDescending(x => x.CreationTime))
+        {
+            <div class="media mt-4">
+                <img class="d-flex mr-3 rounded-circle" src="@Url.ProfilePhoto(item.Author.ProfilePhoto)" alt="" width="50" height="50">
+                <div class="media-body">
+                    <h5 class="mt-0">@item.Author.DisplayName</h5>
+                    @item.Content <br />
 
-    <!-- Comment with nested comments -->
-    @foreach (var item in Model.Post.Comments.
-        Where(x => x.State == SpringBlog.Enums.CommentState.Approved && x.ParentId == null).
-        OrderByDescending(x => x.CreationTime))
-    {
-        <div class="media mt-4">
-            <img class="d-flex mr-3 rounded-circle" src="@Url.ProfilePhoto(item.Author.ProfilePhoto)" alt="" width="50" height="50">
-            <div class="media-body">
-                <h5 class="mt-0">@item.Author.DisplayName</h5>
-                @item.Content <br />
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a href="" class="replay-button" data-comment-id="@item.Id">Reply</a>
+                    }
+                    else
+                    {
+                        <a href="" class="replay-button yukari" data-comment-id="@item.Id">Reply</a>
+                    }
+                    <div class="reply-form-wrapper"></div>
 
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <a href="" class="replay-button" data-comment-id="@item.Id">Reply</a>
-                }
-                else
-                {
-                    <a href="" class="replay-button yukari" data-comment-id="@item.Id">Reply</a>
-                }
-                <div class="reply-form-wrapper"></div>
-
-                @foreach (var subcomment in item.Children.
-                    Where(x => x.State == SpringBlog.Enums.CommentState.Approved).
-                    OrderBy(x => x.CreationTime))
-                {
-                    <div class="media mt-4">
-                        <img class="d-flex mr-3 rounded-circle" src="@Url.ProfilePhoto(subcomment.Author.ProfilePhoto)" alt="" width="50" height="50">
-                        <div class="media-body">
-                            <h5 class="mt-0">@subcomment.Author.DisplayName</h5>
-                            @subcomment.Content
+                    @foreach (var subcomment in item.Children.
+                        Where(x => x.State == SpringBlog.Enums.CommentState.Approved).
+                        OrderBy(x => x.CreationTime))
+                    {
+                        <div class="media mt-4">
+                            <img class="d-flex mr-3 rounded-circle" src="@Url.ProfilePhoto(subcomment.Author.ProfilePhoto)" alt="" width="50" height="50">
+                            <div class="media-body">
+                                <h5 class="mt-0">@subcomment.Author.DisplayName</h5>
+                                @subcomment.Content
+                            </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 
 
 </div>
@@ -100,6 +101,14 @@
         setTimeout(function () {
             if (location.hash == "#leave-a-comment") {
                 window.scrollTo(0, $("#leave-a-comment").offset().top - 65);
+
+            }
+
+        }, 100);
+
+        setTimeout(function () {
+            if (location.hash == "#comments") {
+                window.scrollTo(0, $("#comments").offset().top - 65);
 
             }
 

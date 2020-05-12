@@ -15,13 +15,24 @@ namespace SpringBlog.Areas.Admin.Controllers
             return View(db.Comments.ToList());
         }
         [HttpPost]
-        public ActionResult ChangeState(int id , bool isPublished)
+        public ActionResult ChangeState(int id, bool isPublished)
         {
             var comment = db.Comments.Find(id);
 
             comment.State = isPublished ? Enums.CommentState.Approved : Enums.CommentState.Rejected;
             db.SaveChanges();
             return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Delete(int id)
+        {
+            var comment = db.Comments.Find(id);
+            db.Comments.RemoveRange(comment.Children);
+            db.Comments.Remove(comment);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
     }
 }
