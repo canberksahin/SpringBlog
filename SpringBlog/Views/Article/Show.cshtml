@@ -35,7 +35,7 @@
 
     <!-- Comments Form -->
     <div class="card my-4" id="leave-a-comment">
-        <h5 class="card-header" >Leave a Comment:</h5>
+        <h5 class="card-header">Leave a Comment:</h5>
         <div class="card-body">
             @if (Request.QueryString["commentSuccess"] == "True")
             {
@@ -57,7 +57,7 @@
 
     <!-- Comment with nested comments -->
     @foreach (var item in Model.Post.Comments.
-        Where(x => x.State == SpringBlog.Enums.CommentState.Approved && x.ParentId==null).
+        Where(x => x.State == SpringBlog.Enums.CommentState.Approved && x.ParentId == null).
         OrderByDescending(x => x.CreationTime))
     {
         <div class="media mt-4">
@@ -65,7 +65,15 @@
             <div class="media-body">
                 <h5 class="mt-0">@item.Author.DisplayName</h5>
                 @item.Content <br />
-                <a href="" class="replay-button" data-comment-id="@item.Id">Reply</a>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a href="" class="replay-button" data-comment-id="@item.Id">Reply</a>
+                }
+                else
+                {
+                    <a href="" class="replay-button yukari" data-comment-id="@item.Id">Reply</a>
+                }
                 <div class="reply-form-wrapper"></div>
 
                 @foreach (var subcomment in item.Children.
@@ -92,14 +100,33 @@
         setTimeout(function () {
             if (location.hash == "#leave-a-comment") {
                 window.scrollTo(0, $("#leave-a-comment").offset().top - 65);
+
             }
+
         }, 100);
 
+        $(".yukari").click(function () {
+            window.scrollTo(0, $("#leave-a-comment").offset().top - 265);
+        });
         $(".replay-button").click(function (event) {
 
             var commentId = $(this).data("comment-id");
             event.preventDefault();
+
+            //zaten tıklanmışsa kapat
+            if ($(this).next(".reply-form-wrapper").html()) {
+                $(this).next(".reply-form-wrapper").html("");
+                return;
+            }
             var frm = $("#leave-a-comment form").clone();
+
+            // change style of the clone
+            frm.addClass("d-flex justify-content-end");
+            frm.find(".form-group").addClass("flex-fill mb-0");
+            frm.find("button").addClass("btn-sm align-self-end ml-1");
+
+
+
             frm.find("#ParentId").val(commentId);
             $(".reply-form-wrapper").html("");
             $(this).next(".reply-form-wrapper").html(frm);
