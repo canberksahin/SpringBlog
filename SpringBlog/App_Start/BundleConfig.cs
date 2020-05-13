@@ -31,7 +31,7 @@ namespace SpringBlog
             bundles.Add(new StyleBundle("~/Content/bootstrap", "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css").Include(
                       "~/Content/bootstrap.css"));
 
-            bundles.Add(new StyleBundle("~/Content/croppie", "https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.4/croppie.min.js").Include(
+            bundles.Add(new StyleBundle("~/Content/croppie", "https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.4/croppie.min.css").Include(
              "~/Content/croppie.min.css"));
 
             bundles.Add(new StyleBundle("~/Content/fontawesome", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css").Include(

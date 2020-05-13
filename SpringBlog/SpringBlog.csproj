@@ -2226,13 +2226,13 @@
     <Content Include="webfonts\fa-brands-400.ttf" />
     <Content Include="webfonts\fa-brands-400.eot" />
     <Content Include="Views\Shared\_CommentFormPartial.cshtml" />
+    <Content Include="Upload\Profiles\.gitignore" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Views\Base\" />
     <Folder Include="Areas\Admin\Views\Slug\" />
-    <Folder Include="Upload\Profiles\" />
     <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>
